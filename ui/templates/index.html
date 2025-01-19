@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End of Life Lookup</title>
+</head>
+<body>
+    <h1>Product End of Life Lookup</h1>
+    <form method="POST" action="/search">
+        <label for="product_name">Enter Product Name:</label>
+        <input type="text" id="product_name" name="product_name" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if results %}
+        <h2>Results:</h2>
+        <ul>
+            {% for url, info in results.items() %}
+                <li>{{ url }}: {{ info }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
