@@ -46,20 +46,20 @@ class EOLScraper:
                     latest_version = entry.get('latest', 'N/A')
                     latest_release_date = entry.get('latestReleaseDate', 'N/A')
 
-                    # Determine the support status in the correct order
+                    # Adjust handling of 'false' EOL date and provide better status information
                     if eol_date != 'N/A' and eol_date != False:
                         support_status = eol_date  # If there is an EOL date, use it
                     elif entry.get('lts', False):
                         support_status = 'Active Support'  # If it’s an LTS version, use Active Support
                     elif eol_date == False:
-                        support_status = 'Critical Support'  # If eol is False, it's critical support
+                        support_status = 'Critical Support (No EOL Date Set)'  # Handle 'false' case
                     else:
                         support_status = 'Security Support'  # Default fallback to Security Support
                     
                     eol_info.append({
                         "version": version,
                         "release_date": release_date,
-                        "eol_date": eol_date,
+                        "eol_date": eol_date if eol_date != False else 'Not Set',  # Handle 'false' as 'Not Set'
                         "latest_version": latest_version,
                         "latest_release_date": latest_release_date,
                         "support_status": support_status
@@ -89,3 +89,5 @@ class EOLScraper:
             print(f"  - Latest Release Date: {entry['latest_release_date']}")
             print(f"  - EOL Date: {entry['eol_date']}")
             print(f"  - Support Status: {entry['support_status']}")
+
+

@@ -43,8 +43,13 @@ def get_eol_info():
     if eol_info:
         # Prioritize different levels of support
         priority_order = ["Support", "Active Support", "Critical Support", "Security Support"]
-        sorted_info = sorted(eol_info, key=lambda x: priority_order.index(x.get("support_status", "Security Support")) if x.get("support_status") in priority_order else len(priority_order))
+        sorted_info = sorted(
+        [item for item in eol_info if isinstance(item, dict)],  # Filter out non-dictionaries
+        key=lambda x: priority_order.index(x.get("support_status", "Security Support"))
+        if x.get("support_status") in priority_order else len(priority_order)
+        )
         return jsonify(sorted_info)
+
 
     return jsonify({"error": "No EOL information found"}), 404
 
