@@ -5,7 +5,7 @@ def main():
         # Define the software name
         software_name = input("Enter the software name: ").strip()
         
-        # Base URL for the endoflife.date site
+        # Base URL 
         base_url = "https://endoflife.date"
         
         print(f"Scraping EOL information for: {software_name}")  # Debugging statement
@@ -13,7 +13,7 @@ def main():
         # Call the scrape_eol_info function
         eol_data = scrape_eol_info({"base_url": base_url}, software_name)
 
-        # Check and print the 
+        # Print
         if isinstance(eol_data, list):
             print(f"EOL information for {software_name}:")
             for entry in eol_data:
