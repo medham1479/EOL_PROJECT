@@ -89,7 +89,3 @@ class EOLScraper:
             print(f"  - Latest Release Date: {entry['latest_release_date']}")
             print(f"  - EOL Date: {entry['eol_date']}")
             print(f"  - Support Status: {entry['support_status']}")
-
-# Example Usage
-scraper = EOLScraper()
-scraper.print_eol_info("Apache APISIX")  # Fetch and print EOL info for Apache APISIX
