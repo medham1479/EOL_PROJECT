@@ -1,4 +1,5 @@
 import pandas as pd
+import os, json
 import os
 
 class Indexer:
@@ -14,7 +15,7 @@ class Indexer:
 
     def add_to_index(self, software_name, eol_info, url):
         """Store new EOL info."""
-        entry = {"Software": software_name, "EOL Info": eol_info, "URL": url}
+        entry = {"Software": software_name, "EOL Info": json.dumps(eol_info), "URL": url}
         self.data.append(entry)
         self.save_index()
 
@@ -26,5 +27,5 @@ class Indexer:
         """Retrieve EOL info for a given software name."""
         for entry in self.data:
             if software_name.lower() in entry["Software"].lower():
-                return entry
+                return json.loads(entry["EOL Info"].replace("","\""))
         return None

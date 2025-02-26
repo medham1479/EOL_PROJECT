@@ -1,4 +1,4 @@
-from eol_scraper import scrape_eol_info  # Ensure this matches your EOLScraper file
+from eol_scraper import scrape_eol_info  
 
 def main():
     try:
