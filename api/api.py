@@ -71,7 +71,7 @@ def get_eol_info():
         # Save the data to CSV
         save_to_csv(software_name, str(eol_info))
         
-        # Prioritize different levels of support
+        # prioritize different levels of support
         priority_order = ["Support", "Active Support", "Critical Support", "Security Support"]
         sorted_info = sorted(
             [item for item in eol_info if isinstance(item, dict)],  # Filter out non-dictionaries
