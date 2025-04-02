@@ -1,7 +1,7 @@
 import sys
 import os
 import csv
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template 
 
 try:
     from indexer import Indexer
@@ -62,7 +62,7 @@ def get_eol_info():
     if software_name_lower in data:
         return jsonify(eval(data[software_name_lower]))  # Convert string back to list of dicts
 
-    # Otherwise, scrape the data
+    #  scrape the data
     eol_info = indexer.get_eol_info(software_name)
     if not eol_info:
         eol_info = scraper.fetch_eol_info(software_name)
