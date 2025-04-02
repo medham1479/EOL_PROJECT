@@ -62,13 +62,13 @@ def get_eol_info():
     if software_name_lower in data:
         return jsonify(eval(data[software_name_lower]))  # Convert string back to list of dicts
 
-    #  scrape the data
+    # scrape the data
     eol_info = indexer.get_eol_info(software_name)
     if not eol_info:
         eol_info = scraper.fetch_eol_info(software_name)
 
     if eol_info:
-        # Save the fetched data to CSV
+        # Save the data to CSV
         save_to_csv(software_name, str(eol_info))
         
         # Prioritize different levels of support
