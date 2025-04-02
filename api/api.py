@@ -1,5 +1,6 @@
 import sys
 import os
+import csv
 from flask import Flask, jsonify, request, render_template
 
 try:
@@ -19,6 +20,28 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 indexer = Indexer()
 scraper = EOLScraper()
 
+# Path to the CSV file where data is stored
+CSV_FILE = 'index.csv'
+
+def read_csv_data():
+    """Reads the index.csv file and returns it as a dictionary."""
+    data = {}
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, 'r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip the header
+            for row in reader:
+                software_name, eol_data = row[0], row[1]
+                data[software_name.lower()] = eol_data
+    return data
+
+def save_to_csv(software_name, eol_info):
+    """Saves EOL info to the index.csv file."""
+    with open(CSV_FILE, 'a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        # Write software name and EOL data
+        writer.writerow([software_name, eol_info])
+
 @app.route("/")
 def home():
     """Serve the front-end page."""
@@ -31,25 +54,31 @@ def get_eol_info():
     if not software_name:
         return jsonify({"error": "Please provide a software name"}), 400
 
-    # Try fetching from the index first
+    # Check if the software name exists in the CSV first
+    data = read_csv_data()
+    software_name_lower = software_name.lower()
+
+    # If data is in CSV, return it
+    if software_name_lower in data:
+        return jsonify(eval(data[software_name_lower]))  # Convert string back to list of dicts
+
+    # Otherwise, scrape the data
     eol_info = indexer.get_eol_info(software_name)
-    
     if not eol_info:
-        # If not found in the index, scrape the data
         eol_info = scraper.fetch_eol_info(software_name)
-        if eol_info:
-            indexer.add_to_index(software_name, eol_info, f"https://endoflife.date/{software_name.lower().replace(' ', '-')}")
-    
+
     if eol_info:
+        # Save the fetched data to CSV
+        save_to_csv(software_name, str(eol_info))
+        
         # Prioritize different levels of support
         priority_order = ["Support", "Active Support", "Critical Support", "Security Support"]
         sorted_info = sorted(
-        [item for item in eol_info if isinstance(item, dict)],  # Filter out non-dictionaries
-        key=lambda x: priority_order.index(x.get("support_status", "Security Support"))
-        if x.get("support_status") in priority_order else len(priority_order)
+            [item for item in eol_info if isinstance(item, dict)],  # Filter out non-dictionaries
+            key=lambda x: priority_order.index(x.get("support_status", "Security Support"))
+            if x.get("support_status") in priority_order else len(priority_order)
         )
         return jsonify(sorted_info)
-
 
     return jsonify({"error": "No EOL information found"}), 404
 
